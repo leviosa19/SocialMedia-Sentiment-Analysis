@@ -1,0 +1,11 @@
+# app.py: 1
+Flask == 1.0.2
+pip install -U Flask
+
+# app.py: 3
+textblob == 0.15.2
+pip install -U textblob
+
+# app.py: 2
+tweepy == 3.7.0
+pip install tweepy

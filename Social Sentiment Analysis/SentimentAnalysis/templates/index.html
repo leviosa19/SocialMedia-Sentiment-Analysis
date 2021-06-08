@@ -1,0 +1,222 @@
+<html>
+<head>
+  <title>Python Sentiment Analysis | Using TextBlob and Vader Sentiment</title>
+  <meta charset="UTF-8">
+  <meta name="description" content="Simple tool to find sentiment analysis in Python using TextBlob and Vader Sentiment.">
+  <meta name="keywords" content="Python, Python Sentiment Analysis, Vader Sentiment, TextBlob">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+	<link rel="icon" type="image/png" href="./static/img/favicon.png" />
+  
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+  <style>
+	.positive {
+		border-radius: 25px;
+		border: 2px solid #73AD21;
+		padding: 20px; 
+		width: 200px;
+		height: 150px;    
+	}
+	.positive h2{padding: 20px; color:#73AD21}
+	
+	.negative {
+		border-radius: 25px;
+		border: 2px solid #d13532;
+		padding: 20px; 
+		width: 200px;
+		height: 150px;    
+	}
+	.negative h2{padding: 20px; color:#d13532}
+	
+	.neutral {
+		border-radius: 25px;
+		border: 2px solid #8a6d3b;
+		padding: 20px; 
+		width: 200px;
+		height: 150px;    
+	}
+	.neutral h2{padding: 20px; color:#8a6d3b}
+	/* .jumbotron {
+		background-size: 100% 600px;
+  		background-repeat: no-repeat;
+	  	background-image: url("https://yrcharisma.com/wp-content/uploads/2019/07/feat.jpg");
+		background-position: center center;
+	} */
+</style>
+  
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Social Sentiment Analysis</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarsExample07">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active" style="margin-left: 25px;">
+                        <a class="nav-link" href="http://127.0.0.1:5000/sentiment">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav justify-content-end">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="http://127.0.0.1:5001/facebook">Facebook</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="http://127.0.0.1:5002/twitter">Twitter</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+<div class="jumbotron text-center">
+	<h1>Single Text Sentiment Analysis</h1>
+  	<p>Sentiment analysis of Single Text or Sentence. Type any Single Text or Sentence in the below input field to get Sentiment.</p>
+</div>
+  
+<div class="container editor" style="text-align: center;">
+  	<div class="row form-group">
+		<div class="col-sm-2"></div>
+		<div class="col-sm-8">
+			<input type="text" placeholder="Enter text to analyze.." id="givenText" class="form-control input-lg">
+		</div>
+		<div class="col-sm-2"></div>
+  	</div>
+  
+	<div class="row form-group" style="display: inline-block;">
+		<div>
+			<button id="findSentiment" value="Analyze" class="btn btn-success btn-lg"><i class="fa fa-bar-chart "></i> Analyze</button>
+		</div>
+	</div>
+
+  	<hr>
+  
+  	<div class="row hide result-div">
+		<div class="col-lg-2"></div>
+		<div class="col-lg-3 col-md-12 col-sm-12">
+			<div class="result-class">
+				<h2 id="result-text"></h2>
+			</div>
+		</div>
+
+		<div class="col-lg-5 col-md-12 col-sm-12">
+			<canvas id="myChart" height="170"></canvas>
+		</div>
+		<div class="col-lg-2"></div>
+  	</div> 
+  	<div style="margin-top: 100px;"></div>
+</div>
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.10.0/lodash.min.js"></script>
+
+<script>
+
+	$("#findSentiment").click(function(e){
+		var inputText = $("#givenText").val();
+		if(inputText){
+			$.get('/get-sentiment/'+inputText,function(result){
+				console.log(result);
+				$(".result-div").removeClass("hide positive negative neutral");	
+				$(".result-class").removeClass("positive negative neutral");	
+				$("#result-text").html("");	
+
+				var max_sentiment_dictionary = {'pos': result.pos, 'neg': result.neg, 'neu': result.neu}
+				
+				if(result.compound >= 0.05){
+					$('.result-class').addClass("positive");
+					$("#result-text").html("Positive");
+				} else if( result.compound <= -0.05 ){
+					$('.result-class').addClass("negative");
+					$("#result-text").html("Negative");
+				}else{
+					$('.result-class').addClass("neutral");
+					$("#result-text").html("Neutral");
+				}
+
+				// var lowest = _.max(Object.keys(max_sentiment_dictionary), function (o) {
+				// 	return max_sentiment_dictionary[o];
+				// });
+
+				// if (lowest == 'pos') {
+				// 	$('.result-class').addClass("positive");
+				// 	$("#result-text").html("Positive");
+				// } else if (lowest == 'neg') {
+				// 	$('.result-class').addClass("negative");
+				// 	$("#result-text").html("Negative");
+				// } else {
+				// 	$('.result-class').addClass("neutral");
+				// 	$("#result-text").html("Neutral");
+				// }
+				
+
+
+				var ctx = document.getElementById('myChart').getContext('2d');
+				
+				var data = {
+					animationEnabled: true,
+					labels: ["Negative", "Neutral", "Positive"],
+					datasets: [
+						{
+							label: "Sentiment",
+							barPercentage: 0.5,
+							barThickness: 6,
+							maxBarThickness: 8,
+							minBarLength: 2,
+							backgroundColor: "rgba(255,99,132,0.2)",
+							borderColor: "rgba(255,99,132,1)",
+							borderWidth: 2,
+							hoverBackgroundColor: "rgba(255,99,132,0.4)",
+							hoverBorderColor: "rgba(255,99,132,1)",
+							data: [result.neg*100, result.neu*100, result.pos*100]
+						}
+					]
+				};
+				
+				var option = {
+					scales: {
+						yAxes:[{
+								stacked:true,
+							gridLines: {
+								display:true,
+							  	color:"lightgray"
+							}
+						}],
+						xAxes:[{
+							gridLines: {
+								display:true,
+								offsetGridLines: true
+							}
+						}]
+					}
+				};
+				
+				var myBarChart = new Chart(ctx, {
+					type: 'horizontalBar',
+					data: data,
+					options: option
+				});
+				
+			})
+		}
+		else{
+			$(".result-div").addClass("hide");
+			alert("Please enter text to analyze");
+		}
+	});	
+
+</script>
+</body>
+</html>

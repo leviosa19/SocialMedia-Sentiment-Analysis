@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <link rel="icon" type="image/png" href="./static/img/twitter.png">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="author" content="Rahul Bhatia">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Twitter Sentiment Analysis</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+        
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="static/font-awesome/css/font-awesome.min.css">
+		<link rel="stylesheet" href="static/css/form-elements.css">
+        <link rel="stylesheet" href="static/css/style.css">
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        
+
+    </head>
+
+    <body>
+
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#">Social Sentiment Analysis</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarsExample07">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active" style="margin-left: 25px;">
+                            <a class="nav-link" href="http://127.0.0.1:5000/sentiment">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav justify-content-end">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="http://127.0.0.1:5001/facebook">Facebook</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="http://127.0.0.1:5002/twitter">Twitter</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Top content -->
+        <div class="top-content">
+        	
+            <div class="inner-bg container">
+                <div class="">
+                    <div class="row">
+                        <div class="col-sm-12 col-sm-offset-1 text">
+                            <h1><strong>Twitter</strong> Sentiment Analysis</h1>
+                            <!-- <div class="description">
+                            	<p>
+	                            	Search for your favorite topic in twitter, using <strong>Sentiment</strong> filter!
+                            	</p>
+                            </div> -->
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-sm-12  form-box">
+                        	<div class="form-top">
+                        		<div class="form-top-left">
+                        			<h3>What tweets you want to see!</h3>
+                            		<p>Use below input field to fetch respective tweets and do some sentiment stuffs using below buttons.</p>
+                        		</div>
+                        		<div class="form-top-right">
+                        			<i class="fa fa-twitter" style="color:#38A1F3;"></i>
+                        		</div>
+                            </div>
+
+                            <div class="form-bottom">
+			                    <form role="form" id="form" class="login-form" style="text-align: center;">
+			                    	<div class="form-group">
+			                    		<label class="sr-only" for="form-username">Username</label>
+			                        	<input type="text" name="tweet_search" placeholder="Enter a search topic" class="form-username form-control" id="form-username">
+			                        </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-6"><button id="search_btn" class="btn" style="background-color: #38A1F3;">Search Tweets</button></div>
+                                        <div class="col-lg-6"><button data-toggle="tooltip" data-placement="top" title="Show all Tweets"  class="btn" style="background-color: #38A1F3;">Reset Filters</button></div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-3"><button  data-toggle="tooltip" data-placement="left" title="Show only Positive Tweets" class="btn" style="background-color: #38A1F3;" id="psenti">Positive Tweets</button></div>
+                                        <div class="col-lg-3"><button  data-toggle="tooltip" data-placement="left" title="Show only Negative Tweets"  class="btn" style="background-color: #38A1F3;" id="nsenti">Negative Tweets</button></div>
+                                        <div class="col-lg-3"><button data-toggle="tooltip" data-placement="left" title="Tweets which are Opinion"  id="opi" class="btn" style="background-color: #38A1F3;">Opinion Tweet</button></div>
+                                        <div class="col-lg-3"><button  data-toggle="tooltip" data-placement="left" title="Tweets which are factual"  id="fac" class="btn " style="background-color: #38A1F3;">Factual Tweet</button></div>
+                                    </div>
+
+                                    <p class="text-white text-left">The result shows below are top 15 tweets of respective query you entered in the text field.</p>
+
+                                    <!-- <div class="row search_tweets">
+                                                 <div class="col-sm-offset-3 col-sm-6">
+                                                       <button id="search_btn" class="btn">Search Tweets</button>
+                                                 </div>
+                                        </div>
+
+                                    <div class="row reset_filter">
+                                                 <div class="col-sm-offset-3 col-sm-6">
+                                                       <button data-toggle="tooltip" data-placement="top" title="Show all Tweets"  class="btn">Reset Filters</button>
+                                                 </div>
+                                        </div> 
+                                     <div class="row">
+                                        <div class="col-sm-4 col-sm-offset-1">
+                                            <div class="row">
+                                                 <div class="col-sm">
+                                                      <button  data-toggle="tooltip" data-placement="left" title="Show only Positive Tweets" class="btn" id="psenti">Positive Tweets</button>
+                                                 </div>
+                                                 <div class="col-sm">
+                                                        <button  data-toggle="tooltip" data-placement="left" title="Show only Negative Tweets"  class="btn" id="nsenti">Negative Tweets</button>
+                                                 </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-4 col-sm-offset-2">
+                                            <div class="row">
+                                                 <div class="col-sm">
+                                                      <button data-toggle="tooltip" data-placement="left" title="Tweets which are Opinion"  id="opi" class="btn">Opinion Tweet</button>
+                                                 </div>
+                                                 <div class="col-sm">
+                                                        <button  data-toggle="tooltip" data-placement="left" title="Tweets which are factual"  id="fac" class="btn">Factual Tweet</button>
+                                                 </div>
+                                            </div>
+                                        </div> -->
+
+                                    </div>
+
+			                    </form>
+		                    </div>
+                        </div>
+
+                    </div>
+
+                    <div id="search_result">
+                        <ol id="search_list">
+
+                        </ol>
+                    </div>
+
+
+                </div>
+            </div>
+            
+        </div>
+
+
+        <!-- Javascript -->
+        <script src="static/js/jquery-1.11.1.min.js"></script>
+        
+        <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+        <script src="static/js/jquery.backstretch.min.js"></script>
+        <script src="static/js/scripts.js"></script>
+
+        <script src="{{ url_for('static',filename='index.js') }}"></script>
+
+        <!--[if lt IE 10]>
+            <script src="static/js/placeholder.js"></script>
+        <![endif]-->
+
+    </body>
+
+</html>

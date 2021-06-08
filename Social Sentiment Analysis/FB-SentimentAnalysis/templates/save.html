@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+
+{% block head %} 
+    <title>Facebook Sentiment Analysis</title>
+{% endblock %}
+
+{% block body %} 
+
+
+    <br>
+
+    <form action="/upload/{{ name }}" method="POST">
+        <input type="submit" value="Click to See Sentiment Analysis" class="btn btn-block btn-outline-success" style="display: table; margin: 0 auto;">
+    </form>
+
+    <br>
+
+
+    <div class="container">
+        <div style="height: 600px; width: 100%; display: -moz-box; -moz-box-orient: vertical;">
+            <div style="overflow: auto; min-height: 1px; max-height: 550px; border-color: red;">
+                
+                {% for i in upload %}
+                    <p><b>{{ i[0].count }}. {{ i[0].line }}</b></p>
+                    <p>Sentiment: <b>{{ i[0].snt }}</b></p>
+                    <p>Overall Sentiment: <b>{{ i[0].max_sentiment }}</b></p>
+                    <br>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6" style="padding-top: 80px;">
+
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col" colspan="3" class="text-center" style="font-size: 30px;">Total Sentiments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for x in x %}
+                        <tr>
+                            <th scope="row"></th>
+                            <td>Total Comments</td>
+                            <td>{{ x[0].pos + x[0].neg + x[0].neu }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row"></th>
+                            <td>Total Positive</td>
+                            <td>{{ x[0].pos }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row"></th>
+                            <td>Total Negative</td>
+                            <td>{{ x[0].neg }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row"></th>
+                            <td>Total Neutral</td>
+                            <td>{{ x[0].neu }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+            <div class="col-lg-6 text-center">
+                <center><canvas id="myChart" width="600" height="400"></canvas></center>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <br>
+
+    <div class="row">
+        
+        <div class="col-lg-8">
+            <center><canvas id="myChart2" width="600" height="600"></canvas></center>
+        </div>
+        
+        <div class="col-lg-4">
+            
+            <table class="table table-sm">
+
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="2" class="text-center" style="font-size: 30px;">Top 20 Words</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for words in mc %}
+                    <tr>
+                        <td>{{ words[0].word }}</td>
+                        <td>{{ words[0].counts }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+    <br>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    <script>
+        Chart.defaults.global.responsive = false;
+ 
+        // define the Pie chart data
+        var chartData = {
+            labels : [ 'Positive', 'Neutral', 'Negative' ],
+            datasets : [
+                {
+                    label: '{{ legend }}',
+                    fill: true,
+                    lineTension: 0.1,
+                    backgroundColor: ["#cff1ef", '#116979', '#fe346e'],
+                    // borderColor: "rgba(75,192,192,1)",
+                    borderCapStyle: 'butt',
+                    borderDash: [],
+                    borderWidth: 5,
+                    borderDashOffset: 0.0,
+                    borderJoinStyle: 'miter',
+                    pointBorderColor: "rgba(75,192,192,1)",
+                    pointBackgroundColor: "#fff",
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                    pointHoverBorderColor: "rgba(220,220,220,1)",
+                    pointHoverBorderWidth: 5,
+                    pointRadius: 1,
+                    pointHitRadius: 10,
+                    data : [{% for item in values %} {{item}}, {% endfor %} ],
+                    spanGaps: false
+                }
+            ]
+        };
+        
+        // get chart canvas
+        var ctx = document.getElementById("myChart").getContext("2d");
+        
+        // create the chart using the chart canvas
+        var myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: chartData,
+            cutoutPercentage: 30
+            // options: options
+        });
+
+
+
+ 
+        
+
+
+        var ctx2 = document.getElementById('myChart2').getContext('2d');
+        var myChart2 = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: [ {% for item in mc %}
+                            "{{ item[0].word }}",
+                          {% endfor %}
+                        ],
+                datasets: [{
+                    label: 'Top 20 words',
+                    data: [ {% for item in mc %}
+                                {{ item[0].counts }},
+                            {% endfor %}
+                        ],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1,
+                    barPercentage: 0.5,
+                    barThickness: 6,
+                    maxBarThickness: 8,
+                    minBarLength: 2
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+    </script>
+
+
+{% endblock %}
